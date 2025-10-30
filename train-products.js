@@ -1,5 +1,6 @@
 const tf = require('@tensorflow/tfjs-node');
 const fs = require('fs');
+const readline = require('readline');
 
 function boolToNum(val) {
   return val ? 1 : 0;
@@ -53,22 +54,38 @@ model.compile({ optimizer: tf.train.adam(0.01), loss: 'meanSquaredError' });
   });
   console.log('Training complete.');
 
-  const inputBrand = process.argv[2];
-
-  const testVector = oneHot(brandToIndex[inputBrand], brands.length);
-  const testTensor = tf.tensor2d([testVector]);
-
-  const normalizedPred = model.predict(testTensor);
-  const pred = normalizedPred.mul(labelMax.sub(labelMin)).add(labelMin);
-  const predictedPrice = (await pred.data())[0];
-
-  console.log(`\nPredicted average price for brand "${inputBrand}": $${predictedPrice.toFixed(2)}`);
-
-  const items = products.filter(product => product.brand === inputBrand)
-  const actualAvgPrice = items.reduce((total, item) => total + item.price, 0) / items.length;
-
-  console.log(`\nActual average price for brand "${inputBrand}": $${actualAvgPrice}`);
-
-  // Optional: save model
   await model.save('file://./product-model');
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  const askBrand = () => {
+    rl.question("Enter a brand to predict price: ", async (inputBrand) => {
+      if (!brandToIndex[inputBrand]) {
+        console.log("Brand not found in dataset.");
+        rl.close();
+        return;
+      }
+
+      const testVector = oneHot(brandToIndex[inputBrand], brands.length);
+      const testTensor = tf.tensor2d([testVector]);
+
+      const normalizedPred = model.predict(testTensor);
+      const pred = normalizedPred.mul(labelMax.sub(labelMin)).add(labelMin);
+      const predictedPrice = (await pred.data())[0];
+
+      console.log(`\nPredicted average price for brand "${inputBrand}": $${predictedPrice.toFixed(2)}`);
+
+      const items = products.filter(product => product.brand === inputBrand)
+      const actualAvgPrice = items.reduce((total, item) => total + item.price, 0) / items.length;
+
+      console.log(`\nActual average price for brand "${inputBrand}": $${actualAvgPrice}`);
+
+      askBrand();
+    });
+  }
+  
+  askBrand(); // start the loop
 })();

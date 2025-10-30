@@ -59,5 +59,5 @@ for (let i = 0; i < 1000; i++) {
 }
 
 // Save to JSON file
-fs.writeFileSync('officeworks_products.json', JSON.stringify(products, null, 2));
-console.log('✅ Generated officeworks_products.json with 500 products and realistic prices');
+fs.writeFileSync('products.json', JSON.stringify(products, null, 2));
+console.log('✅ Generated products.json with 1000 products and realistic prices');
