@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node generate-products.js && node train-products.js"
+    "start": "node generate-products.js && node train-products.js Samsung"
   },
   "keywords": [],
   "author": "",

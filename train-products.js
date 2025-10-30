@@ -64,6 +64,10 @@ model.compile({ optimizer: tf.train.adam(0.01), loss: 'meanSquaredError' });
 
   console.log(`\nPredicted average price for brand "${inputBrand}": $${predictedPrice.toFixed(2)}`);
 
+  const items = products.filter(product => product.brand === inputBrand)
+  const actualAvgPrice = items.reduce((total, item) => total + item.price, 0) / items.length;
+
+  console.log(`\nActual average price for brand "${inputBrand}": $${actualAvgPrice}`);
 
   // Optional: save model
   await model.save('file://./product-model');
