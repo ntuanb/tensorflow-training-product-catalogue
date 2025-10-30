@@ -6,5 +6,6 @@ This is learning  example of how to use Tensorflow and train a model with a prod
 
 ```
 $ npm i
+$ node generate-products.js
 $ node train-products.js Canon
 ```
