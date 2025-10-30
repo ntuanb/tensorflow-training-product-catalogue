@@ -15,12 +15,16 @@ const products = JSON.parse(rawData);
 const brands = [...new Set(products.map(p => p.brand))];
 const brandToIndex = Object.fromEntries(brands.map((b, i) => [b, i]));
 
-const inputs = products.map(p => oneHot(brandToIndex[p.brand], brands.length));
+const inputs = products.map(p => oneHot(brandToIndex[p.brand], brands.length)); 
+console.log('Inputs', JSON.stringify(inputs), '\n\n')
 const labels = products.map(p => [p.price]);
+console.log('Labels', JSON.stringify(labels), '\n\n')
 
 // Convert to tensors
 const inputTensor = tf.tensor2d(inputs);
+console.log('inputTensor', JSON.stringify(inputTensor), '\n\n')
 const labelTensor = tf.tensor2d(labels);
+console.log('labelTensor', JSON.stringify(labelTensor), '\n\n')
 
 // Normalize numeric values (important for training)
 const inputMax = inputTensor.max(0);
