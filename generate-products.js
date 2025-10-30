@@ -1,12 +1,28 @@
 const fs = require('fs');
+const crypto = require('crypto'); // For UUID
 
-// Example categories and brands
+// Categories, brands, and realistic price ranges
 const categories = {
-  Technology: ["Logitech", "HP", "Canon", "Apple", "Microsoft", "Samsung", "Belkin", "Epson"],
-  Stationery: ["Marbig", "Stabilo", "Bic", "PaperMate", "Sharpie", "Pilot", "Uni-ball"],
-  "Office Furniture": ["Steelcase", "Fellowes", "Artiss", "ErgoTune", "Tontine", "Sylex"],
-  "Art & Craft": ["Reeves", "Derwent", "Faber-Castell", "Crayola", "Winsor & Newton"],
-  "Cleaning & Breakroom": ["Dettol", "Ajax", "Finish", "Nescafe", "Kleenex", "Morning Fresh"]
+  Technology: {
+    brands: ["Logitech", "HP", "Canon", "Apple", "Microsoft", "Samsung", "Belkin", "Epson"],
+    priceRange: [50, 1800] // Technology is expensive
+  },
+  Stationery: {
+    brands: ["Marbig", "Stabilo", "Bic", "PaperMate", "Sharpie", "Pilot", "Uni-ball"],
+    priceRange: [2, 25] // Cheap items
+  },
+  "Office Furniture": {
+    brands: ["Steelcase", "Fellowes", "Artiss", "ErgoTune", "Tontine", "Sylex"],
+    priceRange: [50, 1200] // Furniture is mid-expensive
+  },
+  "Art & Craft": {
+    brands: ["Reeves", "Derwent", "Faber-Castell", "Crayola", "Winsor & Newton"],
+    priceRange: [5, 150]
+  },
+  "Cleaning & Breakroom": {
+    brands: ["Dettol", "Ajax", "Finish", "Nescafe", "Kleenex", "Morning Fresh"],
+    priceRange: [2, 100]
+  }
 };
 
 // Helper to create random product name by category
@@ -22,19 +38,19 @@ function generateProductName(category, brand) {
   return `${brand} ${choices[Math.floor(Math.random() * choices.length)]}`;
 }
 
-// Generate 500 products
 const products = [];
-for (let i = 0; i < 500; i++) {
+for (let i = 0; i < 1000; i++) {
   const categoryNames = Object.keys(categories);
   const category = categoryNames[Math.floor(Math.random() * categoryNames.length)];
-  const brand = categories[category][Math.floor(Math.random() * categories[category].length)];
+  const { brands, priceRange } = categories[category];
+  const brand = brands[Math.floor(Math.random() * brands.length)];
 
   const product = {
     id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${i}`,
     name: generateProductName(category, brand),
     brand,
     category,
-    price: parseFloat((Math.random() * (1800 - 2.5) + 2.5).toFixed(2)),
+    price: parseFloat((Math.random() * (priceRange[1] - priceRange[0]) + priceRange[0]).toFixed(2)),
     size: parseFloat((Math.random() * 50 + 0.1).toFixed(2)),
     stockQuantity: Math.floor(Math.random() * 296) + 5,
     isOnlineExclusive: Math.random() < 0.5
@@ -43,5 +59,5 @@ for (let i = 0; i < 500; i++) {
 }
 
 // Save to JSON file
-fs.writeFileSync('products.json', JSON.stringify(products, null, 2));
-console.log('✅ Generated products.json with 500 products');
+fs.writeFileSync('officeworks_products.json', JSON.stringify(products, null, 2));
+console.log('✅ Generated officeworks_products.json with 500 products and realistic prices');
